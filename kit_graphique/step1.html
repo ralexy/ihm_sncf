@@ -12,17 +12,40 @@
 <main>
     <article id="step1">
         <h1>Etape 1. Saisie du trajet</h1>
-        <nav aria-label="Breadcrumb" class="breadcrumb">
+        <nav aria-label="breadcrumb" class="breadcrumb">
             <ul>
-                <li><span class="step active">1</span> <span aria-current="page" class="stepTextActive">Saisie du trajet</span></li>
-                <li><span class="step">2</span> <a href="step2.html"> Saisie fréquence de voyage</a></li>
-                <li><span class="step">3</span> <a href="step3.html"> Saisie horaire de voyage</a></li>
-                <li><span class="step">4</span> <a href="result.html"> Résultat</a></li>
+                <li><span class="step active">1</span> <span aria-current="page" class="stepTextActive hide">Saisie du trajet</span></li>
+                <li><span class="step">2</span> <span class="hide">Saisie fréquence de voyage</span></li>
+                <li><span class="step">3</span> <span class="hide">Saisie horaire de voyage</span></li>
+                <li><span class="step">4</span> <span class="hide">Résultat</span></li>
             </ul>
         </nav>
 
         <div>
-            <p>Je prends le trajet ...</p>
+
+            <form method="post">
+                <p class="center">
+                    <input list="depart" placeholder="Gare de départ" name="depart" />
+                    <datalist id="depart">
+                        <option value="Amiens">
+                        <option value="Paris">
+                        <option value="Caen">
+                        <option value="Dieppe">
+                        <option value="Lille">
+                        <option value="Marseille">
+                    </datalist>
+    
+                    <select name="arrivee" id="arrivee">
+                        <option value="">Choisir une gare d'arrivée</option>
+                        <option value="RUE">RUE</option>
+                        <option value="CAEN">CAEN</option>
+                        <option value="LESQUIN">LESQUIN</option>
+                        <option value="NICE">NICE</option>
+                    </select>
+                </p>
+
+                <p class="center min"><sup>* La carte jeune m'est inutile si je ne trouve pas mon trajet habituel.</sup></p>
+            </form>
 
             <p class="center">
                 <a href="step2.html">

@@ -14,15 +14,19 @@
         <h1>Etape 4. Résultat</h1>
         <nav aria-label="Breadcrumb" class="breadcrumb">
             <ul>
-                <li><span class="step">1</span> <a href="step1.html">Saisie du trajet</a></li>
-                <li><span class="step">2</span> <a href="step2.html"> Saisie fréquence de voyage</a></li>
-                <li><span class="step">3</span> <a href="step3.html"> Saisie horaire de voyage</a></li>
-                <li><span class="step active">4</span> <span aria-current="page" class="stepTextActive">Résultat</span></li>
+                <li><a href="step2.html"><span class="step">1</span> <span class="hide">Saisie du trajet</span></a></li>
+                <li><a href="step2.html"><span class="step">2</span> <span class="hide">Saisie fréquence de voyage</span></a></li>
+                <li><a href="result.html"><span class="step">3</span> <span class="hide">Saisie horaire de voyage</span></a></li>
+                <li><span class="step active">4</span> <span aria-current="page" class="stepTextActive hide">Résultat</span></li>
             </ul>
         </nav>
 
         <div>
             <p>Je prends le trajet ...</p>
+
+            <div>
+                <canvas id="myChart"></canvas>
+            </div>              
 
             <p class="center">
                 <a href="step1.html">
@@ -32,4 +36,36 @@
         </div>
     </article>
 </main>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const labels = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+    ];
+  
+    const data = {
+      labels: labels,
+      datasets: [{
+        label: 'My First dataset',
+        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: 'rgb(255, 99, 132)',
+        data: [0, 10, 5, 2, 20, 30, 45],
+      }]
+    };
+  
+    const config = {
+      type: 'line',
+      data: data,
+      options: {}
+    };
+
+    const myChart = new Chart(
+    document.getElementById('myChart'),
+    config
+  );
+  </script>  
 </body>

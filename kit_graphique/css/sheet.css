@@ -79,6 +79,7 @@ main article {
     display: flex;
     list-style-type: none;
     justify-content: center;
+    margin-bottom: 30px;
 }
 
 .breadcrumb li::before {
@@ -100,7 +101,7 @@ main article {
     text-decoration: underline;
 }
 
-body .active {
+body .active, a .step:hover, .breadcrumb li:hover a .step {
     background: #3B3B98;
     border: none;
     color: white;
@@ -123,15 +124,25 @@ body .stepTextActive {
 }
 
 #step0 {
-    min-height: 350px;
+    height: 350px;
     background: url('../images/pub.jpg') no-repeat top;
-    background-color: white;
-    background-size: 100% 100%;
+    background-color: #fcf7fb;
+    background-size: 100%;
 }
 
 #step0 button {
   position: relative;
-  top: 205px;
+  top: 190px;
+}
+
+#step2 input {
+    width: 40px;
+    padding: inherit;
+    border: none;
+    border-bottom: 2px solid purple;
+    font-size: 16px;
+    background: #eee;
+    padding: 3px;
 }
 
 article h1 {
@@ -144,16 +155,37 @@ article h1 {
     border-radius: 5px;
 }
 
+article .min {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+}
+
+article p {
+    font-size: 16px;
+}
+
+input[name="depart"], select {
+    width: 200px; height: 40px;
+    border: none;
+    border-bottom: 2px solid purple;
+    font-size: 16px;
+    background: #eee;
+}
+
+input {
+    padding: 0 20px;
+}
+
 article button {
     background-color: #800080;
-    min-width: 220px; height: 60px;
+    min-width: 240px; height: 60px;
     margin: 30px auto 0 auto;
     border: none;
     color: white;
-    font-size: 16px;
-    border-radius: 5px;
+    font-size: 17px;
     border 3px solid transparent;
-    border-radius: 5px;
+    border-radius: 30px;
 }
 article button:hover {
     border: 3px solid #800080;
@@ -161,4 +193,15 @@ article button:hover {
     color: #800080;
     cursor: pointer;
     transition: all 200ms linear;
+}
+
+@media screen and (max-width: 1000px) {
+    .hide {
+        display: none;
+    }
+    .step {
+        width: 32px; height: 32px;
+        line-height: 32px;
+        font-size: 18px;
+    }
 }

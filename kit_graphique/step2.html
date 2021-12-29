@@ -10,19 +10,21 @@
     <h1><a href="index.html">Kelcarte?</a></h1>
 </header>
 <main>
-    <article id="step1">
+    <article id="step2">
         <h1>Etape 2. Saisie fréquence de voyage</h1>
         <nav aria-label="Breadcrumb" class="breadcrumb">
             <ul>
-                <li><span class="step">1</span> <a href="step1.html"> Saisie du trajet</a></li>
-                <li><span class="step active">2</span> <span aria-current="page" class="stepTextActive">Saisie fréquence du voyage</span></li>
-                <li><span class="step">3</span> <a href="step3.html"> Saisie horaire de voyage</a></li>
-                <li><span class="step">4</span> <a href="result.html"> Résultat</a></li>
+                <li><a href="step1.html"><span class="step">1</span> <span class="hide">Saisie du trajet</span></a></li>
+                <li><span class="step active">2</span> <span aria-current="page" class="stepTextActive hide">Saisie fréquence de voyage</span></li>
+                <li><a href="step3.html"><span class="step">3</span> <span class="hide">Saisie horaire de voyage</span></a></li>
+                <li><span class="step">4</span> <span class="hide">Résultat</span></li>
             </ul>
         </nav>
 
         <div>
-            <p>Je prends le trajet ...</p>
+            <form method="post">
+                <p class="center">Je compte voyager environ <input type="number" name="frequence" id="frequence" value="1" step="1" min="1" max="364" oninput="validity.valid||(value='');"> fois par an</p>
+            </form>
 
             <p class="center">
                 <a href="step3.html">

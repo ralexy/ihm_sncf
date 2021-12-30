@@ -1,8 +1,8 @@
 <template>
 <p class="center">
-    <router-link :to="link">
+    <!--<router-link :to="link">-->
         <button>{{ msg }}</button>
-    </router-link>
+    <!--</router-link>-->
 </p>
 </template>
 

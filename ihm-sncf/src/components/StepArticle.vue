@@ -1,24 +1,20 @@
 <template>
     <article :id="id">
-        <h1>{{ title }}</h1>
-        <Breadcrumb v-if="breadCrumbEnabled !== false" />
-        <span v-html="content"></span>
-        <ButtonStep :msg='nextStepMsg' :link='nextStepLink' />
+            <h1>{{ title }}</h1>
+            <Breadcrumb :step="breadCrumbStep" v-if="breadCrumbStep" />
+            <slot>
+            </slot>
     </article>
 </template>
 
 <script>
-import ButtonStep from "./ButtonStep.vue";
 import Breadcrumb from "./Breadcrumb.vue";
 export default {
     props: {
         id: String,
         title: String,
-        content: String,
-        nextStepMsg: String,
-        nextStepLink: String,
-        breadCrumbEnabled: Boolean,
+        breadCrumbStep: String,
     },
-    components: { ButtonStep, Breadcrumb }
+    components: { Breadcrumb }
 }
 </script>

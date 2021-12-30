@@ -2,34 +2,31 @@
 <StepArticle
     id='result'
     title='Etape 4. Résultat'
-    content='
-      <h2 class="green center">J&#39;ai intérêt à prendre la carte jeune</h2>
-      <h3 class="green center">Je peux économiser XX€ avec</h3>
-      <h4 class="green center">Elle se rembourse en XX trajets</h4>
+    breadCrumbStep=4>
+        <h2 class="green center">J&#39;ai intérêt à prendre la carte jeune</h2>
+            <h3 class="green center">Je peux économiser XX€ avec</h3>
+            <h4 class="green center">Elle se rembourse en XX trajets</h4>
 
-        <div>
-          <div style="width: 70%; float: left;">
+            <div style="width: 70%; float: left;">
             <canvas id="chart1"></canvas>
-          </div>   
+            </div>   
             
-          <div style="width: 30%; float: right;">
+            <div style="width: 30%; float: right;">
             <canvas id="chart2"></canvas>
-          </div>
+            </div>
 
-          <div style="clear: both;"></div>
-    '
-    nextStepMsg='Recommencer'
-    nextStepLink='/'
-    breadCrumbEnabled
- />
+            <div style="clear: both;"></div>
+            <ButtonStep msg='Recommencer' link='step1'/>
+    </StepArticle>
 </template>
 
 <script>
 import StepArticle from '@/components/StepArticle.vue'
+import ButtonStep from "@/components/ButtonStep.vue";
 export default {
   name: 'Resultat',
   components: {
-    StepArticle,
+    StepArticle, ButtonStep
   }
 }
 </script>

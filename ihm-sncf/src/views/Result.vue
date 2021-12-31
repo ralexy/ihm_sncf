@@ -7,6 +7,8 @@
             <h3 class="green center">Je peux économiser XX€ avec</h3>
             <h4 class="green center">Elle se rembourse en XX trajets</h4>
 
+            {{ apiResponse }}
+
             <div style="width: 70%; float: left;">
             <canvas id="chart1"></canvas>
             </div>   
@@ -27,7 +29,15 @@ export default {
   name: 'Resultat',
   components: {
     StepArticle, ButtonStep
-  }
+  },
+  data() {
+      return {
+          apiResponse: null,
+      }
+  },
+  mounted() {
+      if(localStorage.apiResponse) this.apiResponse = localStorage.apiResponse;
+  },
 }
 </script>
 <!--<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

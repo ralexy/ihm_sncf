@@ -51,7 +51,8 @@ export default {
             7 : 'Dimanche',
         },
         hours: {
-            0 : '0h00',
+            0: 'Je ne sais pas',
+            1: '0h00',
             100: '1h00',
             200: '2h00',
             300: '3h00',
@@ -85,12 +86,15 @@ export default {
             if(this.day !== null && this.hour !== null) {
                 localStorage.day = this.day;
                 localStorage.hour = this.hour;
+
+                console.log('http://127.0.0.1/ihm_php/?action=getPrices&origin=' + localStorage.depart + "&destination=" + localStorage.arrivee + "&day=" + this.day + "&hour=" + this.hour + "&frequence=" + localStorage.frequence);
               
                 // On peut faire notre requête pour récupérer nos informations finales...
                 this.axios
                     .get('http://127.0.0.1/ihm_php/?action=getPrices&origin=' + localStorage.depart + "&destination=" + localStorage.arrivee + "&day=" + this.day + "&hour=" + this.hour + "&frequence=" + localStorage.frequence)
                     .then(response => {
-                        localStorage.apiResponse = response.data;
+                        localStorage.apiResponse = JSON.stringify(response.data); // Sérialisation
+                        console.log(response.data);
                         this.$router.push('result');
                     });
             }
@@ -99,9 +103,6 @@ export default {
     created() {
         if(localStorage.day) this.day = localStorage.day;
         if(localStorage.hour) this.hour = localStorage.hour;
-
-        console.log(this.hour);
-        console.log(this.day);
     }
 }
 </script>

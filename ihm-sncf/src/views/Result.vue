@@ -3,142 +3,210 @@
     id='result'
     title='Etape 4. Résultat'
     breadCrumbStep=4>
-        <h2 class="green center">J&#39;ai intérêt à prendre la carte jeune</h2>
-            <h3 class="green center">Je peux économiser XX€ avec</h3>
-            <h4 class="green center">Elle se rembourse en XX trajets</h4>
+            <template v-if="apiResponse !== null">
+                <h2 class="green center" v-if="apiResponse.interesting">J&#39;ai intérêt à prendre la carte jeune</h2>
+                <h2 class="red center" v-if="!apiResponse.isInteresting">Je n&#39;ai pas intérêt à prendre la carte jeune</h2>
+                <h3 class="green center" v-if="apiResponse.isInteresting">Je peux économiser {{ apiResponse.savedMoney }}€</h3>
+                <h4 class="green center" v-if="apiResponse.isInteresting">Elle se rembourse en {{ apiResponse.isInterestingNb }} trajets</h4>
+                <h4 class="red center" v-if="!apiResponse.isInteresting">Elle est intéressante au bout de {{ apiResponse.isInterestingNb }} trajets effectués</h4>
+                
+                <vue3-chart-js
+                    :id="chart1.id"
+                    :ref="null"
+                    :type="chart1.type"
+                    :data="chart1.data"
+                    :options="chart1.options"
+                ></vue3-chart-js>
 
-            {{ apiResponse }}
+                <vue3-chart-js
+                    :id="chart2.id"
+                    :ref="null"
+                    :type="chart2.type"
+                    :data="chart2.data"
+                    :options="chart2.options"
+                ></vue3-chart-js>
+            </template>
 
-            <div style="width: 70%; float: left;">
-            <canvas id="chart1"></canvas>
-            </div>   
-            
-            <div style="width: 30%; float: right;">
-            <canvas id="chart2"></canvas>
-            </div>
-
-            <div style="clear: both;"></div>
-            <ButtonStep msg='Recommencer' link='step1'/>
+            <ButtonStep msg='Recommencer' link='/' @click="checkForm" />
     </StepArticle>
 </template>
 
 <script>
-import StepArticle from '@/components/StepArticle.vue'
-import ButtonStep from "@/components/ButtonStep.vue";
-export default {
-  name: 'Resultat',
-  components: {
-    StepArticle, ButtonStep
-  },
-  data() {
-      return {
-          apiResponse: null,
-      }
-  },
-  mounted() {
-      if(localStorage.apiResponse) this.apiResponse = localStorage.apiResponse;
-  },
-}
-</script>
-<!--<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    const data1 = {
-    labels: [1, 2, 3, 4, 5],
-    datasets: [
-        {
-            label: 'Tarif normal',
-            data: [100, 96, 84, 76, 69],
-            borderColor: ['rgba(255,0,0,1)'],
-            backgroundColor: ['rgba(255,0,0,0.5)'],
-            yAxisID: 'y',
-            unitSuffix: "€",
-        },
-        {
-            label: 'Tarif carte jeune',
-            data: [100, 9, 8, 6, 6],
-            borderColor: ['rgba(60,179,113,1)'],
-            backgroundColor: ['rgba(60,179,113,0.5)'],
-            yAxisID: 'y',
-            unitSuffix: "€",
-        },
-    ]
-    };
+import StepArticle from '@/components/StepArticle.vue';
+import ButtonStep from '@/components/ButtonStep.vue';
+import Vue3ChartJs from '@j-t-mcc/vue3-chartjs';
 
-    const config1 = {
-        type: 'line',
-        data: data1,
-        options: 
-        {
-            responsive: true,
-            interaction: {
-                mode: 'index',
-                intersect: false,
-            },
-            stacked: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Comparaison du tarif normal et jeune SNCF en fonction du nombre de voyages'
+export default {
+    name: 'Resultat',
+    components: {
+        StepArticle, ButtonStep, Vue3ChartJs
+    },
+    data() {
+        return {
+            apiResponse: null,
+            chart1: {
+                id: 'chart1',
+                type: 'line',
+                data: {
+                    labels: null,
+                    datasets: [
+                        {
+                            label: 'Tarif normal',
+                            data: null,
+                            borderColor: ['rgba(255,0,0,1)'],
+                            backgroundColor: ['rgba(255,0,0,0.5)'],
+                            yAxisID: 'y',
+                            unitSuffix: "€",
+                        },
+                        {
+                            label: 'Tarif carte jeune',
+                            data: null,
+                            borderColor: ['rgba(60,179,113,1)'],
+                            backgroundColor: ['rgba(60,179,113,0.5)'],
+                            yAxisID: 'y',
+                            unitSuffix: "€",
+                        },
+                    ]
                 },
-                tooltips: {
-                    callbacks: {
-                        afterTitle: function(context) {
-                            return context.parsed.y + ' trajets';
+                options: 
+                {
+                    responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    animations: {
+                        radius: {
+                            duration: 400,
+                            easing: 'linear',
+                            loop: (context) => context.active
                         }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                        type: 'linear',
-                        display: true,
-                        position: 'left',
+                    },
+                    hoverRadius: 12,
+                    hoverBackgroundColor: 'yellow',
+                    stacked: false,
+                    plugins: {
                         title: {
                             display: true,
-                            text: 'Prix en euros'
+                            text: 'Comparaison du tarif normal et jeune SNCF en fonction du nombre de voyages'
                         },
+                        tooltips: {
+                            callbacks: {
+                                afterTitle: function(context) {
+                                    return context.parsed.y + ' trajets';
+                                }
+                            }
+                        }
                     },
+                    scales: {
+                        y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Prix en euros'
+                                },
+                            },
 
-                x: {
-                    type: 'linear',
-                    display: true,
-                    position: 'left',
-                    title: {
-                        display: true,
-                        text: 'Nombre de trajets'
-                    },
-                    ticks: {
-                        min: 1,
-                        stepSize: 1
+                        x: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Nombre de trajets'
+                            },
+                            ticks: {
+                                min: 1,
+                                stepSize: 1
+                            },
+                        },
                     },
                 },
             },
-        },
-    };
-
-    const data2 = {
-        labels: ["Carte SNCF", "Trajets", "Différence de tarif"],
-        datasets: [
-            {
-            label: "Population (millions)",
-            backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f"],
-            data: [49,127,12]
-            }
-        ]
-    };
-
-    const config2 = {
-        type: 'doughnut',
-        data: data2,
-        options: {
-            title: {
-                display: true,
-                text: 'Décomposition du tarif jeune',
-                floating: true,
+            chart2: {
+                type: 'bar',
+                data: {
+                    labels: [''],
+                    datasets: [
+                        {
+                            label: 'Tarif normal',
+                            data: null,
+                            borderColor: ['rgba(255,0,0,1)'],
+                            backgroundColor: ['rgba(255,0,0,0.5)'],
+                            borderWidth: 2,
+                            borderRadius: 5,
+                            borderSkipped: false,
+                        },
+                        {
+                            label: 'Tarif carte jeune',
+                            data: null,
+                            borderColor: ['rgba(60,179,113,1)'],
+                            backgroundColor: ['rgba(60,179,113,0.5)'],
+                            borderWidth: 2,
+                            borderRadius: 5,
+                            borderSkipped: false,
+                        }
+                    ]
+                },               
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Tarifs des deux offres pour un trajet type'
+                        },
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Prix en euros'
+                            },
+                        },
+                    },
+                },
             }
         }
-    };
-    
-    const chart1 = new Chart(document.getElementById('chart1'), config1);
-    const chart2 = new Chart(document.getElementById('chart2'), config2);
-  </script>-->
+    },
+    watch: {
+        apiResponse: function() {
+            let trajets = [];
+            let priceNormal = [];
+            let priceDiscount = [];
+
+            for(let i = 0; i < this.apiResponse['simulation'].length; i++) {
+                trajets.push(i);
+                priceNormal.push(this.apiResponse['simulation'][i]['normal']);
+                priceDiscount.push(this.apiResponse['simulation'][i]['discount']);
+            }
+
+            this.chart1.data.labels = trajets;
+            this.chart1.data.datasets[0].data = priceNormal;
+            this.chart1.data.datasets[1].data = priceDiscount;
+
+            this.chart2.data.datasets[0].data = [this.apiResponse.normalPrice];
+            this.chart2.data.datasets[1].data = [this.apiResponse.pricePromo];
+        },
+    },
+    methods: {
+        checkForm: function(e) {
+            e.preventDefault();
+
+            // Reset du localStorage et redirection à l'accueil
+            localStorage.clear();
+            this.$router.push('/');
+        }
+    },
+    created() {
+        if(localStorage.apiResponse) this.apiResponse = JSON.parse(localStorage.apiResponse); // Désérialisation
+    },
+}
+</script>

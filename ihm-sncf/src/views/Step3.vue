@@ -14,7 +14,7 @@
                 </template>
             </select>
 
-            vers
+            <span class="smallHide">vers</span>
 
             <select name="day" id="hour" v-model="hour" required>
                 <template v-for="(item, key) in hours">
@@ -31,6 +31,7 @@
 <script>
 import StepArticle from '@/components/StepArticle.vue'
 import ButtonStep from "@/components/ButtonStep.vue";
+import apiURL from '@/config/config.js';
 export default {
   name: 'Step3',
   components: {
@@ -87,11 +88,11 @@ export default {
                 localStorage.day = this.day;
                 localStorage.hour = this.hour;
 
-                console.log('http://127.0.0.1/ihm_php/?action=getPrices&origin=' + localStorage.depart + "&destination=" + localStorage.arrivee + "&day=" + this.day + "&hour=" + this.hour + "&frequence=" + localStorage.frequence);
+                console.log(apiURL + '?action=getPrices&origin=' + localStorage.depart + "&destination=" + localStorage.arrivee + "&day=" + this.day + "&hour=" + this.hour + "&frequence=" + localStorage.frequence);
               
                 // On peut faire notre requête pour récupérer nos informations finales...
                 this.axios
-                    .get('http://127.0.0.1/ihm_php/?action=getPrices&origin=' + localStorage.depart + "&destination=" + localStorage.arrivee + "&day=" + this.day + "&hour=" + this.hour + "&frequence=" + localStorage.frequence)
+                    .get(apiURL + '?action=getPrices&origin=' + localStorage.depart + "&destination=" + localStorage.arrivee + "&day=" + this.day + "&hour=" + this.hour + "&frequence=" + localStorage.frequence)
                     .then(response => {
                         localStorage.apiResponse = JSON.stringify(response.data); // Sérialisation
                         console.log(response.data);
@@ -103,6 +104,11 @@ export default {
     created() {
         if(localStorage.day) this.day = localStorage.day;
         if(localStorage.hour) this.hour = localStorage.hour;
+
+        // On fait reculer le WF si l'utilisateur va à cette étape sans avoir effectué la précédente
+        if(!localStorage.garesDepart || !localStorage.garesArrivee) {
+        this.$router.push('step2'); // On fait avancer notre Workflow
+        }
     }
 }
 </script>

@@ -9,7 +9,7 @@
           <datalist id="depart">
               <option v-bind:value="gareDepart.nameGare" v-for="gareDepart in garesDepart" :key="gareDepart.id">{{ gareDepart.nameGare }}</option>
           </datalist>
-          &nbsp;
+          <span class="smallHide">&nbsp;</span>
           <select name="arrivee" v-model="arrivee" id="arrivee" required>
               <option selected disabled>Choisir une gare d'arrivée</option>
               <option v-bind:value="gareArrivee.nameGareDestination" v-for="gareArrivee in garesArrivee" :key="gareArrivee.id">{{ gareArrivee.nameGareDestination }}</option>
@@ -22,8 +22,9 @@
 </template>
 
 <script>
-import StepArticle from '@/components/StepArticle.vue'
+import StepArticle from '@/components/StepArticle.vue';
 import ButtonStep from "@/components/ButtonStep.vue";
+import apiURL from '@/config/config.js';
 export default {
   name: 'Step1',
   components: {
@@ -53,33 +54,43 @@ export default {
     }
   },
   watch: {
-    depart: function(val) {
-      if(val.length >= 3) {
-        this.axios
-          .get('http://127.0.0.1/ihm_php/?action=suggestOriginStation&nameGare=' + this.depart)
-          .then(response => (this.garesDepart = response.data));
-      } else {
-        this.garesDepart = null;
-        this.garesArrivee = null;
-      }
+    depart: {
+      handler: 
+      function(val, oldVal) {
+        if(val.length >= 3) {
+          this.axios
+            .get(apiURL + '?action=suggestOriginStation&nameGare=' + val)
+            .then(response => (this.garesDepart = response.data));
+        } else {
+          this.garesDepart = null;
+          this.garesArrivee = null;
+        }
 
-      // Si notre gare de départ n'est pas nulle on parcourt la liste des gares de départ
-      // Et on regarde si l'utilisateur a cliqué sur une suggestion (si c'est le cas on aura un match)
-      if(this.garesDepart !== null) {
-        for(let i = 0; i < this.garesDepart.length; i++) {
-          let gareCourante = JSON.parse(JSON.stringify(this.garesDepart[i]));
+        if(oldVal !== null && oldVal.length > val.length) {
+          this.garesDepart = null;
+          this.garesArrivee = null;          
+        }
 
-          // Si on a un match on récupère toutes les gares d'arrivée desservies par cette gare.
-          if(gareCourante['nameGare'] == val) {
-            this.axios
-              .get('http://127.0.0.1/ihm_php/?action=suggestDestinationStation&nameGare=' + this.depart)
-              .then(response => (this.garesArrivee = response.data));            
+        // Si notre gare de départ n'est pas nulle on parcourt la liste des gares de départ
+        // Et on regarde si l'utilisateur a cliqué sur une suggestion (si c'est le cas on aura un match)
+        if(this.garesDepart !== null) {
+          for(let i = 0; i < this.garesDepart.length; i++) {
+            let gareCourante = JSON.parse(JSON.stringify(this.garesDepart[i]));
+
+            // Si on a un match on récupère toutes les gares d'arrivée desservies par cette gare.
+            if(gareCourante['nameGare'] == val) {
+              this.axios
+                .get(apiURL + '?action=suggestDestinationStation&nameGare=' + this.depart)
+                .then(response => (this.garesArrivee = response.data));            
+            }
           }
         }
       }
     }
   },
   mounted() {
+    console.log(apiURL)
+
     if(localStorage.depart) this.depart = localStorage.depart;
     if(localStorage.arrivee) this.arrivee = localStorage.arrivee;
     if(localStorage.garesDepart) this.garesDepart = JSON.parse(localStorage.garesDepart); // Désérialisation

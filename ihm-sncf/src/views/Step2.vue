@@ -42,5 +42,11 @@ export default {
   mounted() {
     if(localStorage.frequence) this.frequence = localStorage.frequence;
   },
+  created() {
+        // On fait reculer le WF si l'utilisateur va à cette étape sans avoir effectué la précédente
+    if(!localStorage.garesDepart || !localStorage.garesArrivee) {
+      this.$router.push('step1'); // On fait avancer notre Workflow
+    }
+  }
 }
 </script>

@@ -11,7 +11,7 @@ class PdoKelCarte
     private static $server = 'mysql:host=localhost';
     private static $db = 'dbname=kelcarte';
     private static $user = 'root';
-    private static $pwd = 'root';
+    private static $pwd = '';
     private static $myPdo = null;
     private static $instance = null;
 

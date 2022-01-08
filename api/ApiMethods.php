@@ -15,6 +15,7 @@ class ApiMethods
      * Utile pour débogguer l'Api et comprendre précisément ce qui ne va pas en cas de problème
      */
     const UNDEFINED_ERROR = 'Erreur non définie';
+    const INVALID_PARAMS = 'Paramètres de recherche fournis incorrects';
     const CARDPRICE = 49; // Prix annuel de la carte
     const TWENTYFIVEPERCENT = 0.75;
     const THIRTYPERCENT = 0.70;
@@ -96,6 +97,9 @@ class ApiMethods
             // Vendredi 14h-20h
             // Dimanche 15h - 20h
 
+        $hour = ($hour == 0) ? '' : $hour; // Nettoie la variable pour le "Je ne sais pas côté API";
+        $frequence = (int) $frequence;
+
         $q = $this->pdo->prepare('SELECT t.prix AS normalPrice, r.nameRegion FROM trajets t INNER JOIN gares g ON t.idGareOrigine = g.idGare INNER JOIN regions r ON g.idRegion = r.idRegion WHERE t.idGareOrigine = (SELECT idGare FROM gares WHERE nameGare = :origin) AND t.idGareDestination = (SELECT idGare FROM gares WHERE nameGare = :destination)');
         $q->bindValue('origin', $origin, PDO::PARAM_STR);
         $q->bindValue('destination', $destination, PDO::PARAM_STR);
@@ -103,84 +107,95 @@ class ApiMethods
 
         $d = $q->fetch(PDO::FETCH_ASSOC);
 
-        /**
-         * Calendrier période blanche / bleue applicable pour 2021
-         */
-        switch ($d['nameRegion']) {
-            case 'GRAND EST':
-            case 'HAUTS DE FRANCE':
-                $d['pricePromo'] = round($d['normalPrice'] * self::TWENTYFIVEPERCENT, 2); // 25% de remise toujours
-                break;
-
-            case 'PAYS DE LA LOIRE':
-                $d['pricePromo'] = round($d['normalPrice'] * self::THIRTYPERCENT, 2); // 30% de remise toujours
-                break;
-
-            default:
-                $d['pricePromo'] = $d['normalPrice'];
-
-                switch($day) {
-                    case 1: // Lundi
-                    case 2: // Mardi
-                    case 3: // Mercredi
-                    case 4: // Jeudi
-                        // Période blanche (moins de cas = moins de conditions)
-                        if(($hour >= 630  && $hour < 800) || ($hour >= 1700 && $hour < 1830)) {
-                            $d['periode'] = self::BLANCHE;
-                        }
-                        // Période bleue
-                        else {
-                            $d['periode'] = self::BLEUE;
-                        }
+        // Si notre requête a matché on continue
+        if(isset($d['nameRegion'])) {
+            /**
+             * Calendrier période blanche / bleue applicable pour 2021
+             */
+            switch ($d['nameRegion']) {
+                case 'GRAND EST':
+                case 'HAUTS DE FRANCE':
+                    $d['pricePromo'] = round($d['normalPrice'] * self::TWENTYFIVEPERCENT, 2); // 25% de remise toujours
                     break;
 
-                    case 5: // Vendredi
-                        // Période blanche (moins de cas = moins de conditions)
-                        if(($hour >= 630  && $hour < 800) || ($hour >= 1400 && $hour < 2000)) {
-                            $d['periode'] = self::BLANCHE;
-                        }
-                        // Période bleue
-                        else {
-                            $d['periode'] = self::BLEUE;
-                        }
+                case 'PAYS DE LA LOIRE':
+                    $d['pricePromo'] = round($d['normalPrice'] * self::THIRTYPERCENT, 2); // 30% de remise toujours
                     break;
 
-                    case 6: // Samedi
-                        // Période bleue toujours
-                        $d['periode'] = self::BLEUE;
+                default:
+                    $d['pricePromo'] = $d['normalPrice'];
+
+                    switch($day) {
+                        case 1: // Lundi
+                        case 2: // Mardi
+                        case 3: // Mercredi
+                        case 4: // Jeudi
+                        default: // Par défaut si la date n'est pas fournie on considère qu'on est dans ce cas prédominant
+                            // Période blanche (moins de cas = moins de conditions)
+                            if(($hour >= 630  && $hour < 800) || ($hour >= 1700 && $hour < 1830)) {
+                                $d['periode'] = self::BLANCHE;
+                            }
+                            // Période bleue
+                            else {
+                                $d['periode'] = self::BLEUE;
+                            }
                         break;
 
-                    case 7: // Dimanche
-                        // Période blanche (moins de cas = moins de conditions)
-                        if(($hour >= 1500 && $hour < 2000)) {
-                            $d['periode'] = self::BLANCHE;
-                        }
-                        // Période bleue
-                        else {
+                        case 5: // Vendredi
+                            // Période blanche (moins de cas = moins de conditions)
+                            if(($hour >= 630  && $hour < 800) || ($hour >= 1400 && $hour < 2000)) {
+                                $d['periode'] = self::BLANCHE;
+                            }
+                            // Période bleue
+                            else {
+                                $d['periode'] = self::BLEUE;
+                            }
+                        break;
+
+                        case 6: // Samedi
+                            // Période bleue toujours
                             $d['periode'] = self::BLEUE;
-                        }
+                            break;
+
+                        case 7: // Dimanche
+                            // Période blanche (moins de cas = moins de conditions)
+                            if($hour >= 1500 && $hour < 2000) {
+                                $d['periode'] = self::BLANCHE;
+                            }
+                            // Période bleue
+                            else {
+                                $d['periode'] = self::BLEUE;
+                            }
+                        break;
+                    }
+
+                    $d['pricePromo'] = ($d['periode'] == self::BLANCHE) ? round($d['normalPrice'] * self::TWENTYFIVEPERCENT, 2) : round($d['normalPrice'] * self::FIFTYPERCENT, 2); // 25% ou 50% de remise selon la période blanche ou bleue
                     break;
-                }
+            }
 
-                $d['pricePromo'] = ($d['periode'] == self::BLANCHE) ? round($d['normalPrice'] * self::TWENTYFIVEPERCENT, 2) : round($d['normalPrice'] * self::FIFTYPERCENT, 2); // 25% ou 50% de remise selon la période blanche ou bleue
-                break;
+            $i = 0;
+            $interesting = false;
+            do {
+                $d['simulation'][$i]['normal'] = $i * $d['normalPrice'];
+                $d['simulation'][$i]['discount'] = $i * $d['pricePromo'] + self::CARDPRICE;
+                $d['simulation'][$i]['interesting'] = $d['simulation'][$i]['discount'] < $d['simulation'][$i]['normal'];
+                $interesting = $d['simulation'][$i]['discount'] < $d['simulation'][$i]['normal'];
+                if($interesting && empty($d['isInterestingNb'])) { $d['isInterestingNb'] = $i; }
+                $i++;
+            } while(!$interesting || $i < $frequence); // On continue la simulation jusqu'à atteindre le seuil de rentabilité ou le nb de trajets du client
+
+            $d['savedMoney'] = ($frequence * ($d['normalPrice']-$d['pricePromo']) - self::CARDPRICE > 0) ? round($frequence * ($d['normalPrice']-$d['pricePromo']) - self::CARDPRICE, 2) : 0;
+            $d['totalPrice'] = round(($frequence * $d['normalPrice']), 2);
+            $d['totalDiscountPrice'] = round(($frequence * $d['pricePromo']) + self::CARDPRICE, 2);
+            $d['isInteresting'] = ($d['simulation'][$frequence-1]['normal'] >= $d['simulation'][$frequence-1]['discount']) ? true : false;
+        
+            return $d;
+        } else {
+            $result['message'] = self::INVALID_PARAMS;
+
+            return $result;
         }
-
-        $i = 0;
-        $interesting = false;
-        do {
-            $d['simulation'][$i]['normal'] = $i * $d['normalPrice'];
-            $d['simulation'][$i]['discount'] = $i * $d['pricePromo'] + self::CARDPRICE;
-            $d['simulation'][$i]['interesting'] = $d['simulation'][$i]['discount'] < $d['simulation'][$i]['normal'];
-            $interesting = $d['simulation'][$i]['discount'] < $d['simulation'][$i]['normal'];
-            $i++;
-        } while(!$interesting);
-
-        $d['savedMoney'] = ($frequence * ($d['normalPrice']-$d['pricePromo']) - self::CARDPRICE > 0) ? $frequence * ($d['normalPrice']-$d['pricePromo']) - self::CARDPRICE : 0;
-        $d['totalPrice'] = ($frequence * $d['normalPrice']);
-        $d['totalDiscountPrice'] = ($frequence * $d['pricePromo']) + self::CARDPRICE;
-
-        return $d;
+        
     }
 
     /**

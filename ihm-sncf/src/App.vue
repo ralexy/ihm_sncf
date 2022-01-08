@@ -77,14 +77,6 @@ main article {
     position: relative;
 }
 
-/*main article div {
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
-}*/
-
 .breadcrumb ul {
     display: flex;
     list-style-type: none;
@@ -92,7 +84,7 @@ main article {
     margin-bottom: 30px;
 }
 
-.breadcrumb li::before {
+.breadcrumb li:not(:first-child):before {
     content: "→";
     margin: 0 10px;
     font-size: 24px;
@@ -100,6 +92,7 @@ main article {
 
 .breadcrumb li:first-child::before {
     content: "";
+    font-size: 24px;
 }
 
 .breadcrumb li a, .breadcrumb a:visited {
@@ -146,7 +139,7 @@ body .stepTextActive {
 }
 
 #step2 input {
-    width: 40px;
+    width: 60px;
     padding: inherit;
     border: none;
     border-bottom: 2px solid purple;
@@ -156,6 +149,7 @@ body .stepTextActive {
 }
 
 article h1 {
+    font-size: 20px;
     position: absolute;
     top: -20px; left: -20px;
     transform: rotate(-2deg);
@@ -205,7 +199,7 @@ article button:hover {
     transition: all 200ms linear;
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1366px) {
     .hide {
         display: none;
     }
@@ -215,4 +209,67 @@ article button:hover {
         font-size: 18px;
     }
 }
+
+@media screen and (max-width: 700px) {
+    body .step {
+        width: 20px; height: 20px;
+        line-height: 20px;
+        font-size: 13px;
+    }
+    .breadcrumb {
+        margin: 20px auto;
+    }
+    .breadcrumb li::before {
+        font-size: 16px;
+    }
+    article h1 {
+        font-size: 10px;
+        margin-bottom: 30px;
+    }
+    #step0 {
+        height: auto;
+        background-image: none;
+    }
+    #step0 button {
+        top: inherit;
+    }
+    article button {
+        min-width: inherit;
+        width: 80%;
+        font-size: 15px;
+    }
+    .smallHide {
+        display: none;
+    }
+    .step {
+        width: 32px; height: 32px;
+        line-height: 32px;
+        font-size: 18px;
+    }
+    #step1 input[type="text"], .step1 select, article button {
+        width: 95%;
+    }
+    #step1 input[type="text"], #step1 select, #step3 select {
+        margin-top: 20px;
+    }
+}
+@media (max-height: 700px), screen and (orientation: portrait) {
+    #resultData {
+        display: none;
+    }
+    #rotatePhone {
+        display: block;
+        width: 100%;
+    }
+}
+
+@media (max-height: 700px), screen and (orientation: landscape) {
+    #resultData {
+        display: block;
+    }
+    #rotatePhone {
+        display: none;
+    }
+}
+
 </style>

@@ -3,29 +3,32 @@
     id='result'
     title='Etape 4. Résultat'
     breadCrumbStep=4>
-            <template v-if="apiResponse !== null">
-                <h2 class="green center" v-if="apiResponse.interesting">J&#39;ai intérêt à prendre la carte jeune</h2>
-                <h2 class="red center" v-if="!apiResponse.isInteresting">Je n&#39;ai pas intérêt à prendre la carte jeune</h2>
-                <h3 class="green center" v-if="apiResponse.isInteresting">Je peux économiser {{ apiResponse.savedMoney }}€</h3>
-                <h4 class="green center" v-if="apiResponse.isInteresting">Elle se rembourse en {{ apiResponse.isInterestingNb }} trajets</h4>
-                <h4 class="red center" v-if="!apiResponse.isInteresting">Elle est intéressante au bout de {{ apiResponse.isInterestingNb }} trajets effectués</h4>
-                
-                <vue3-chart-js
-                    :id="chart1.id"
-                    :ref="null"
-                    :type="chart1.type"
-                    :data="chart1.data"
-                    :options="chart1.options"
-                ></vue3-chart-js>
+            <img src="@/assets/rotatephone.png" id="rotatePhone">
+            <span id="resultData">
+                <template v-if="apiResponse !== null">
+                    <h2 class="green center" v-if="apiResponse.interesting">J&#39;ai intérêt à prendre la carte jeune</h2>
+                    <h2 class="red center" v-if="!apiResponse.isInteresting">Je n&#39;ai pas intérêt à prendre la carte jeune</h2>
+                    <h3 class="green center" v-if="apiResponse.isInteresting">Je peux économiser {{ apiResponse.savedMoney }}€</h3>
+                    <h4 class="green center" v-if="apiResponse.isInteresting">Elle se rembourse en {{ apiResponse.isInterestingNb }} trajets</h4>
+                    <h4 class="red center" v-if="!apiResponse.isInteresting">Elle est intéressante au bout de {{ apiResponse.isInterestingNb }} trajets effectués</h4>
+                    
+                    <vue3-chart-js
+                        :id="chart1.id"
+                        :ref="null"
+                        :type="chart1.type"
+                        :data="chart1.data"
+                        :options="chart1.options"
+                    ></vue3-chart-js>
 
-                <vue3-chart-js
-                    :id="chart2.id"
-                    :ref="null"
-                    :type="chart2.type"
-                    :data="chart2.data"
-                    :options="chart2.options"
-                ></vue3-chart-js>
-            </template>
+                    <vue3-chart-js
+                        :id="chart2.id"
+                        :ref="null"
+                        :type="chart2.type"
+                        :data="chart2.data"
+                        :options="chart2.options"
+                    ></vue3-chart-js>
+                </template>
+            </span>
 
             <ButtonStep msg='Recommencer' link='/' @click="checkForm" />
     </StepArticle>
@@ -206,6 +209,11 @@ export default {
         }
     },
     created() {
+        // On fait reculer le WF si l'utilisateur va à cette étape sans avoir effectué la précédente
+        if(!localStorage.garesDepart || !localStorage.garesArrivee) {
+        this.$router.push('step3'); // On fait avancer notre Workflow
+        }
+
         if(localStorage.apiResponse) this.apiResponse = JSON.parse(localStorage.apiResponse); // Désérialisation
     },
 }

@@ -33,6 +33,7 @@
 body {
     background: url('assets/trainstation.jpg') no-repeat center center fixed;
     background-size: cover;
+    font-family: "";
 }
 
 header {
@@ -199,6 +200,10 @@ article button:hover {
     transition: all 200ms linear;
 }
 
+#rotatePhone {
+    display: none;
+}
+
 @media screen and (max-width: 1366px) {
     .hide {
         display: none;
@@ -253,7 +258,7 @@ article button:hover {
         margin-top: 20px;
     }
 }
-@media (max-height: 700px), screen and (orientation: portrait) {
+@media screen and (max-height: 700px) and (orientation: portrait) {
     #resultData {
         display: none;
     }
@@ -263,7 +268,7 @@ article button:hover {
     }
 }
 
-@media (max-height: 700px), screen and (orientation: landscape) {
+@media screen (max-height: 700px) and (orientation: landscape) {
     #resultData {
         display: block;
     }

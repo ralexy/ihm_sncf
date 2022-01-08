@@ -204,6 +204,13 @@ article button:hover {
     display: none;
 }
 
+.green {
+    color: green;
+}
+.red {
+    color: red;
+}
+
 @media screen and (max-width: 1366px) {
     .hide {
         display: none;

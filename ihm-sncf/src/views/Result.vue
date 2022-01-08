@@ -8,9 +8,9 @@
                 <template v-if="apiResponse !== null">
                     <h2 class="green center" v-if="apiResponse.interesting">J&#39;ai intérêt à prendre la carte jeune</h2>
                     <h2 class="red center" v-if="!apiResponse.isInteresting">Je n&#39;ai pas intérêt à prendre la carte jeune</h2>
-                    <h3 class="green center" v-if="apiResponse.isInteresting">Je peux économiser {{ apiResponse.savedMoney }}€</h3>
-                    <h4 class="green center" v-if="apiResponse.isInteresting">Elle se rembourse en {{ apiResponse.isInterestingNb }} trajets</h4>
-                    <h4 class="red center" v-if="!apiResponse.isInteresting">Elle est intéressante au bout de {{ apiResponse.isInterestingNb }} trajets effectués</h4>
+                    <h3 class="center" v-if="apiResponse.isInteresting">Je peux économiser {{ apiResponse.savedMoney }}€</h3>
+                    <h4 class="center" v-if="apiResponse.isInteresting">Elle se rembourse en {{ apiResponse.isInterestingNb }} trajets</h4>
+                    <h4 class="center" v-if="!apiResponse.isInteresting">Elle est intéressante au bout de {{ apiResponse.isInterestingNb }} trajets effectués</h4>
                     
                     <vue3-chart-js
                         :id="chart1.id"

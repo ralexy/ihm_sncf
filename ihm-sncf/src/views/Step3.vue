@@ -98,6 +98,8 @@ export default {
                         console.log(response.data);
                         this.$router.push('result');
                     });
+
+                    console.log(apiURL + '?action=getPrices&origin=' + localStorage.depart + "&destination=" + localStorage.arrivee + "&day=" + this.day + "&hour=" + this.hour + "&frequence=" + localStorage.frequence)
             }
         }
     },
